@@ -39,25 +39,24 @@ func main() {
 	var password [24]byte
 	copy(password[:], viper.GetString("account.password"))
 
-	packet := packets.MasterLogin{
+	masterLogin := packets.MasterLogin{
 		ID:            0x064,
 		Version:       0x012,
 		Username:      username,
 		Password:      password,
 		MasterVersion: 1,
 	}
-	var binBuf bytes.Buffer
-	binary.Write(&binBuf, binary.LittleEndian, packet)
+	var sendBuf bytes.Buffer
+	binary.Write(&sendBuf, binary.LittleEndian, masterLogin)
 
-	fmt.Printf("Send: % x\n", binBuf.Bytes())
+	fmt.Printf("Send: % x\n", sendBuf.Bytes())
+	conn.Write(sendBuf.Bytes())
 
-	conn.Write(binBuf.Bytes())
+	recvBuf := make([]byte, 1024)
 
-	buff := make([]byte, 1024)
+	m, _ := conn.Read(recvBuf)
+	fmt.Printf("Receive: % x\n", recvBuf[:m])
 
-	m, _ := conn.Read(buff)
-	fmt.Printf("Receive: % x\n", buff[:m])
-
-	n, _ := conn.Read(buff)
-	fmt.Printf("Receive: % x\n", buff[:n])
+	n, _ := conn.Read(recvBuf)
+	fmt.Printf("Receive: % x\n", recvBuf[:n])
 }
