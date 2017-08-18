@@ -8,16 +8,10 @@ import (
 	"net"
 	"strings"
 
+	"github.com/parasquid/gore/internal/platform/packets"
+
 	"github.com/spf13/viper"
 )
-
-type MasterLogin struct {
-	id            uint16
-	version       uint32
-	username      [24]byte
-	password      [24]byte
-	masterVersion uint8
-}
 
 func main() {
 	viper.SetConfigType("json")
@@ -45,12 +39,12 @@ func main() {
 	var password [24]byte
 	copy(password[:], viper.GetString("account.password"))
 
-	packet := MasterLogin{
-		id:            0x064,
-		version:       0x012,
-		username:      username,
-		password:      password,
-		masterVersion: 1,
+	packet := packets.MasterLogin{
+		ID:            0x064,
+		Version:       0x012,
+		Username:      username,
+		Password:      password,
+		MasterVersion: 1,
 	}
 	var binBuf bytes.Buffer
 	binary.Write(&binBuf, binary.LittleEndian, packet)
