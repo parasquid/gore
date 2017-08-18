@@ -41,10 +41,10 @@ func main() {
 
 	masterLogin := packets.MasterLogin{
 		ID:            0x064,
-		Version:       0x012,
+		Version:       uint32(viper.GetInt("server.version")),
 		Username:      username,
 		Password:      password,
-		MasterVersion: 1,
+		MasterVersion: uint8(viper.GetInt("server.masterVersion")),
 	}
 	var sendBuf bytes.Buffer
 	binary.Write(&sendBuf, binary.LittleEndian, masterLogin)
